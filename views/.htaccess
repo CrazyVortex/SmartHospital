@@ -1,0 +1,2 @@
+RewriteEngine On
+RewriteRule ^yonetim\.html$ yonetim.php [L]
