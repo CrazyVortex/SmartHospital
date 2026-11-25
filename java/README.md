@@ -51,3 +51,20 @@ Invalid input returns `400`, unsupported media type `415`, oversized request
 `413`, conflicting appointment `409`, missing appointment `404`, and unsupported
 method `405`. CORS preflight is limited to the configured origins, API methods,
 and the `Content-Type` request header.
+
+## PHP API client
+
+`servis.ApiBaglantiServisi` also provides client methods for the existing PHP
+module endpoints, relative to the configured base URL:
+
+| Method | PHP endpoint | Purpose |
+|---|---|---|
+| GET | `api/hasta_listele.php` | List patients |
+| GET | `api/randevu_listele.php` | List appointments |
+| POST (form) | `api/hasta_kaydet.php` | Create or update a patient |
+| POST (form) | `api/randevu_durum.php` | Update appointment status |
+
+These methods return the complete `HttpResponse`, so callers must inspect its
+status code and response body. The standalone Java server does not yet invoke
+this client. Appointment creation and available-time lookup remain in-memory
+operations; the PHP module currently has no matching endpoints for them.
