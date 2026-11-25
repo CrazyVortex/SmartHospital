@@ -1,0 +1,763 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hasta Kayıt ve Hasta Listesi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 24px;
+            background-color: #f4f7fa;
+            color: #1e293b;
+        }
+        .kart {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 24px;
+            max-width: 1420px;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+        }
+        .ust-satir {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+        .ust-satir h2 {
+            margin: 0;
+        }
+        .renk-rehberi {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            align-items: center;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 14px;
+            margin-bottom: 16px;
+        }
+        .alan label {
+            display: block;
+            font-size: 13px;
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: #0f172a;
+        }
+        .alan input, .alan select {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 14px;
+            background: #fff;
+        }
+        .yan-yana-butonlar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+        }
+        button {
+            padding: 9px 15px;
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        button:hover {
+            background-color: #0369a1;
+        }
+        .btn-kaydet {
+            background-color: #1d4ed8;
+        }
+        .btn-kaydet:hover {
+            background-color: #1e40af;
+        }
+        .btn-gri {
+            background-color: #475569;
+        }
+        .btn-gri:hover {
+            background-color: #334155;
+        }
+        .btn-yesil {
+            background-color: #15803d;
+        }
+        .btn-yesil:hover {
+            background-color: #166534;
+        }
+        .btn-ekli {
+            background-color: #0f766e;
+        }
+        .btn-ekli:hover {
+            background-color: #115e59;
+        }
+        .btn-sil {
+            background-color: #b91c1c;
+        }
+        .btn-sil:hover {
+            background-color: #991b1b;
+        }
+        #hastaMesaj {
+            margin-top: 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        .rozet {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 4px;
+            margin-bottom: 2px;
+        }
+        .grup-cocuk {
+            background-color: #fce7f3;
+            color: #9d174d;
+            border: 1px solid #f472b6;
+        }
+        .grup-yetiskin {
+            background-color: #e0f2fe;
+            color: #075985;
+            border: 1px solid #38bdf8;
+        }
+        .grup-yasli {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .uyari-acil {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .uyari-alerji {
+            background-color: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #f97316;
+        }
+        .durum-bekliyor {
+            background-color: #fef08a;
+            color: #713f12;
+            border: 1px solid #eab308;
+        }
+        .durum-muayenede {
+            background-color: #bae6fd;
+            color: #0c4a6e;
+            border: 1px solid #0284c7;
+        }
+        .durum-tamamlandi {
+            background-color: #22c55e;
+            color: #ffffff;
+            border: 1px solid #15803d;
+        }
+        .durum-iptal {
+            background-color: #fecaca;
+            color: #7f1d1d;
+            border: 1px solid #dc2626;
+        }
+        .durum-randevuya_gitmedi {
+            background-color: #e2e8f0;
+            color: #334155;
+            border: 1px solid #94a3b8;
+        }
+        tr.satir-acil {
+            background-color: #fef2f2;
+            border-left: 6px solid #dc2626;
+        }
+        tr.satir-cocuk {
+            background-color: #fdf2f8;
+            border-left: 6px solid #ec4899;
+        }
+        tr.satir-yasli {
+            background-color: #fffbeb;
+            border-left: 6px solid #d97706;
+        }
+        tr.satir-tamamlandi {
+            background-color: #dcfce7;
+            border-left: 6px solid #16a34a;
+        }
+        tr.satir-tamamlandi td {
+            background-color: #dcfce7;
+            border-color: #86efac;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 11px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            font-weight: bold;
+        }
+        .aksiyon-hucre {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="kart">
+        <div class="ust-satir">
+            <h2>Hasta Kayıt Formu</h2>
+        </div>
+
+        <div class="renk-rehberi">
+            <strong>Renk / Etiket Rehberi:</strong>
+            <span class="rozet uyari-acil">ACİL / ÖNCELİKLİ</span>
+            <span class="rozet grup-cocuk">ÇOCUK (&lt;18)</span>
+            <span class="rozet grup-yasli">65+ YAŞLI</span>
+            <span class="rozet grup-yetiskin">YETİŞKİN</span>
+            <span class="rozet uyari-alerji">ALERJİ UYARISI</span>
+            <span class="rozet durum-bekliyor">Bekliyor</span>
+            <span class="rozet durum-muayenede">Muayenede</span>
+            <span class="rozet durum-tamamlandi">Tamamlandı</span>
+            <span class="rozet durum-iptal">İptal</span>
+            <span class="rozet durum-randevuya_gitmedi">Randevuya Gitmedi</span>
+        </div>
+
+        <form id="hastaKayitForm">
+            <div class="form-grid">
+                <div class="alan">
+                    <label for="hastaTc">T.C. Kimlik No *</label>
+                    <input type="text" id="hastaTc" maxlength="11" inputmode="numeric" placeholder="11 haneli T.C.">
+                </div>
+                <div class="alan">
+                    <label for="hastaAd">Hasta Adı *</label>
+                    <input type="text" id="hastaAd" placeholder="Örn: Ayşe">
+                </div>
+                <div class="alan">
+                    <label for="hastaSoyad">Hasta Soyadı *</label>
+                    <input type="text" id="hastaSoyad" placeholder="Örn: Yılmaz">
+                </div>
+                <div class="alan">
+                    <label for="hastaCinsiyet">Cinsiyet</label>
+                    <select id="hastaCinsiyet">
+                        <option value="">Seçilmedi</option>
+                        <option value="kadin">Kız / Kadın</option>
+                        <option value="erkek">Erkek</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="hastaDogum">Doğum Tarihi *</label>
+                    <input type="date" id="hastaDogum">
+                </div>
+                <div class="alan">
+                    <label for="hastaRandevuTarihi">Randevu Tarihi *</label>
+                    <input type="date" id="hastaRandevuTarihi">
+                </div>
+                <div class="alan">
+                    <label for="hastaSaatDilimi">Saat Dilimi *</label>
+                    <select id="hastaSaatDilimi">
+                        <option value="">Saat Dilimi Seçiniz</option>
+                        <option value="sabah">Sabah (12:00 öncesi)</option>
+                        <option value="ogleden_sonra">Öğleden Sonra (12:00 ve sonrası)</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="hastaSaatBaslangic">Saat Aralığı Başlangıç</label>
+                    <input type="time" id="hastaSaatBaslangic">
+                </div>
+                <div class="alan">
+                    <label for="hastaSaatBitis">Saat Aralığı Bitiş</label>
+                    <input type="time" id="hastaSaatBitis">
+                </div>
+                <div class="alan">
+                    <label for="hastaPoliklinik">Poliklinik *</label>
+                    <select id="hastaPoliklinik">
+                        <option value="">Poliklinik Seçiniz</option>
+                        <option value="Dahiliye">Dahiliye</option>
+                        <option value="Çocuk Sağlığı ve Hastalıkları">Çocuk Sağlığı ve Hastalıkları</option>
+                        <option value="Kardiyoloji">Kardiyoloji</option>
+                        <option value="Ortopedi ve Travmatoloji">Ortopedi ve Travmatoloji</option>
+                        <option value="Göz Hastalıkları">Göz Hastalıkları</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="hastaDoktor">Doktor</label>
+                    <select id="hastaDoktor">
+                        <option value="">Doktor Seçilmedi</option>
+                        <option value="Uzm. Dr. Selin Demir">Uzm. Dr. Selin Demir</option>
+                        <option value="Uzm. Dr. Kerem Kaya">Uzm. Dr. Kerem Kaya</option>
+                        <option value="Doç. Dr. Hakan Arslan">Doç. Dr. Hakan Arslan</option>
+                        <option value="Op. Dr. Deniz Yıldız">Op. Dr. Deniz Yıldız</option>
+                        <option value="Uzm. Dr. Elif Koç">Uzm. Dr. Elif Koç</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="hastaAcilDurum">Acil / Öncelik Durumu</label>
+                    <select id="hastaAcilDurum">
+                        <option value="normal">Normal</option>
+                        <option value="acil">Acil / Öncelikli</option>
+                    </select>
+                </div>
+                <div class="alan">
+                    <label for="hastaAlerji">Alerji Bilgisi</label>
+                    <input type="text" id="hastaAlerji" placeholder="Örn: Penisilin (yoksa boş)">
+                </div>
+                <div class="alan">
+                    <label for="hastaRandevuDurum">Randevu Durumu</label>
+                    <select id="hastaRandevuDurum">
+                        <option value="">Seçilmedi (Boş)</option>
+                        <option value="bekliyor">Bekliyor</option>
+                        <option value="muayenede">Muayenede</option>
+                        <option value="tamamlandi">Tamamlandı</option>
+                        <option value="iptal">İptal</option>
+                        <option value="randevuya_gitmedi">Randevuya Gitmedi</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="yan-yana-butonlar">
+                <button type="submit" id="hastaKaydetBtn" class="btn-kaydet">Kaydet</button>
+                <button type="button" id="formSifirlaBtn" class="btn-gri">Sıfırla</button>
+            </div>
+
+            <div id="hastaMesaj"></div>
+        </form>
+    </div>
+
+    <div class="kart">
+        <div class="ust-satir">
+            <h2>Kayıtlı Hastalar</h2>
+        </div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>T.C. No</th>
+                    <th>Hasta Adı</th>
+                    <th>Hasta Soyadı</th>
+                    <th>Cinsiyet</th>
+                    <th>Doğum Tarihi / Yaş</th>
+                    <th>Randevu Tarihi</th>
+                    <th>Saat Dilimi / Aralığı</th>
+                    <th>Poliklinik</th>
+                    <th>Doktor</th>
+                    <th>Alerji / Acil</th>
+                    <th>Randevu Durumu</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody id="hastaTabloGovde">
+                <tr>
+                    <td colspan="13">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const HASTA_DEPO_ANAHTARI = 'smarthospital_kayitli_hastalar';
+        const RANDEVU_DEPO_ANAHTARI = 'smarthospital_aktarilan_randevular';
+
+        const form = document.getElementById('hastaKayitForm');
+        const hastaTc = document.getElementById('hastaTc');
+        const hastaAd = document.getElementById('hastaAd');
+        const hastaSoyad = document.getElementById('hastaSoyad');
+        const hastaCinsiyet = document.getElementById('hastaCinsiyet');
+        const hastaDogum = document.getElementById('hastaDogum');
+        const hastaRandevuTarihi = document.getElementById('hastaRandevuTarihi');
+        const hastaSaatDilimi = document.getElementById('hastaSaatDilimi');
+        const hastaSaatBaslangic = document.getElementById('hastaSaatBaslangic');
+        const hastaSaatBitis = document.getElementById('hastaSaatBitis');
+        const hastaPoliklinik = document.getElementById('hastaPoliklinik');
+        const hastaDoktor = document.getElementById('hastaDoktor');
+        const hastaAcilDurum = document.getElementById('hastaAcilDurum');
+        const hastaAlerji = document.getElementById('hastaAlerji');
+        const hastaRandevuDurum = document.getElementById('hastaRandevuDurum');
+        const formSifirlaBtn = document.getElementById('formSifirlaBtn');
+        const hastaMesaj = document.getElementById('hastaMesaj');
+        const hastaTabloGovde = document.getElementById('hastaTabloGovde');
+
+        let hastalar = [];
+        let guncellenenId = null;
+
+        const cinsiyetEtiketleri = {
+            kadin: 'Kız / Kadın',
+            erkek: 'Erkek'
+        };
+
+        const saatDilimiEtiketleri = {
+            sabah: 'Sabah (12:00 öncesi)',
+            ogleden_sonra: 'Öğleden Sonra (12:00 ve sonrası)'
+        };
+
+        const durumEtiketleri = {
+            bekliyor: 'Bekliyor',
+            muayenede: 'Muayenede',
+            tamamlandi: 'Tamamlandı',
+            iptal: 'İptal',
+            randevuya_gitmedi: 'Randevuya Gitmedi'
+        };
+
+        function hastalariYukle() {
+            try {
+                const raw = localStorage.getItem(HASTA_DEPO_ANAHTARI);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function hastalariKaydet() {
+            try {
+                localStorage.setItem(HASTA_DEPO_ANAHTARI, JSON.stringify(hastalar));
+            } catch (e) {
+                // Depolama hatası durumunda sessiz geç
+            }
+        }
+
+        function randevulariOku() {
+            try {
+                const raw = localStorage.getItem(RANDEVU_DEPO_ANAHTARI);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function randevudaVarMi(hasta) {
+            const randevular = randevulariOku();
+            const tc = String(hasta.tc_no ?? '').trim();
+            if (!tc) return false;
+            return randevular.some(r => String(r.tc_no ?? '').trim() === tc);
+        }
+
+        hastaTc.addEventListener('input', function () {
+            this.value = this.value.replace(/\D/g, '').slice(0, 11);
+        });
+
+        function yasBilgisiHesapla(dogumStr) {
+            if (!dogumStr) return { yas: null, kod: 'yetiskin', etiket: '-' };
+            const d = new Date(dogumStr);
+            if (Number.isNaN(d.getTime())) return { yas: null, kod: 'yetiskin', etiket: '-' };
+
+            const bugun = new Date();
+            let yas = bugun.getFullYear() - d.getFullYear();
+            const m = bugun.getMonth() - d.getMonth();
+            if (m < 0 || (m === 0 && bugun.getDate() < d.getDate())) {
+                yas--;
+            }
+            if (yas < 0) yas = 0;
+
+            if (yas < 18) return { yas, kod: 'cocuk', etiket: `Çocuk (${yas})` };
+            if (yas >= 65) return { yas, kod: 'yasli', etiket: `65+ Yaşlı (${yas})` };
+            return { yas, kod: 'yetiskin', etiket: `Yetişkin (${yas})` };
+        }
+
+        function saatBilgisiOlustur(h) {
+            const dilimMetin = saatDilimiEtiketleri[h.saat_dilimi] || h.saat_dilimi || '-';
+            const aralik = (h.saat_baslangic || h.saat_bitis)
+                ? ` (${h.saat_baslangic || '--:--'} - ${h.saat_bitis || '--:--'})`
+                : '';
+            return `${dilimMetin}${aralik}`;
+        }
+
+        function klinikBilgiOlustur(h) {
+            const parcalar = [];
+            if (h.acil_durum === 'acil') {
+                parcalar.push('<span class="rozet uyari-acil">ACİL</span>');
+            }
+            if (h.alerji) {
+                parcalar.push(`<span class="rozet uyari-alerji">Alerji: ${h.alerji}</span>`);
+            }
+            return parcalar.length > 0 ? parcalar.join(' ') : '-';
+        }
+
+        function durumRozetiOlustur(durum) {
+            const norm = String(durum ?? '').trim().toLowerCase();
+            if (!norm) return '-';
+            const etiket = durumEtiketleri[norm] || durum;
+            return `<span class="rozet durum-${norm}">${etiket}</span>`;
+        }
+
+        function tabloCiz() {
+            hastalar = hastalariYukle();
+            hastaTabloGovde.innerHTML = '';
+
+            if (hastalar.length === 0) {
+                hastaTabloGovde.innerHTML = '<tr><td colspan="13">-</td></tr>';
+                return;
+            }
+
+            hastalar.forEach(h => {
+                const yasBilgi = yasBilgisiHesapla(h.dogum_tarihi);
+                const zatenRandevuda = randevudaVarMi(h);
+                const durumNorm = String(h.randevu_durumu ?? '').trim().toLowerCase();
+                const tr = document.createElement('tr');
+
+                if (durumNorm === 'tamamlandi') {
+                    tr.className = 'satir-tamamlandi';
+                } else if (h.acil_durum === 'acil') {
+                    tr.className = 'satir-acil';
+                } else if (yasBilgi.kod === 'cocuk') {
+                    tr.className = 'satir-cocuk';
+                } else if (yasBilgi.kod === 'yasli') {
+                    tr.className = 'satir-yasli';
+                }
+
+                const dogumGoster = yasBilgi.yas !== null
+                    ? `${h.dogum_tarihi} <span class="rozet grup-${yasBilgi.kod}">${yasBilgi.etiket}</span>`
+                    : (h.dogum_tarihi || '-');
+
+                const aktarButonMetin = zatenRandevuda ? 'Randevuda (Ekli)' : 'Randevuya Aktar';
+                const aktarButonSinif = zatenRandevuda ? 'btn-ekli' : 'btn-yesil';
+
+                tr.innerHTML = `
+                    <td>${h.id}</td>
+                    <td>${h.tc_no}</td>
+                    <td><strong>${h.ad}</strong></td>
+                    <td><strong>${h.soyad}</strong></td>
+                    <td>${cinsiyetEtiketleri[h.cinsiyet] || '-'}</td>
+                    <td>${dogumGoster}</td>
+                    <td>${h.randevu_tarihi || '-'}</td>
+                    <td>${saatBilgisiOlustur(h)}</td>
+                    <td>${h.poliklinik || '-'}</td>
+                    <td>${h.doktor || '-'}</td>
+                    <td>${klinikBilgiOlustur(h)}</td>
+                    <td>${durumRozetiOlustur(h.randevu_durumu)}</td>
+                    <td>
+                        <div class="aksiyon-hucre">
+                            <button type="button" data-guncelle="${h.id}">Güncelle</button>
+                            <button type="button" class="${aktarButonSinif}" data-randevu="${h.id}">${aktarButonMetin}</button>
+                            <button type="button" class="btn-sil" data-sil="${h.id}">Sil</button>
+                        </div>
+                    </td>
+                `;
+
+                tr.querySelector('[data-guncelle]').addEventListener('click', function () {
+                    guncellenenId = h.id;
+                    hastaTc.value = h.tc_no;
+                    hastaAd.value = h.ad;
+                    hastaSoyad.value = h.soyad;
+                    hastaCinsiyet.value = h.cinsiyet || '';
+                    hastaDogum.value = h.dogum_tarihi;
+                    hastaRandevuTarihi.value = h.randevu_tarihi;
+                    hastaSaatDilimi.value = h.saat_dilimi;
+                    hastaSaatBaslangic.value = h.saat_baslangic || '';
+                    hastaSaatBitis.value = h.saat_bitis || '';
+                    hastaPoliklinik.value = h.poliklinik;
+                    hastaDoktor.value = h.doktor || '';
+                    hastaAcilDurum.value = h.acil_durum || 'normal';
+                    hastaAlerji.value = h.alerji || '';
+                    hastaRandevuDurum.value = h.randevu_durumu || '';
+                    hastaMesaj.textContent = `#${h.id} numaralı hasta kaydı düzenleme için forma getirildi.`;
+                    hastaMesaj.style.color = '#0f172a';
+                });
+
+                tr.querySelector('[data-randevu]').addEventListener('click', function () {
+                    const mevcutListe = randevulariOku();
+                    const tcTemiz = String(h.tc_no ?? '').trim();
+
+                    if (tcTemiz && mevcutListe.some(item => String(item.tc_no ?? '').trim() === tcTemiz)) {
+                        hastaMesaj.textContent = `Bu T.C. kimlik numarasına (${tcTemiz}) sahip biri zaten randevu listesinde var.`;
+                        hastaMesaj.style.color = 'crimson';
+                        tabloCiz();
+                        return;
+                    }
+
+                    const aktarilanKayit = {
+                        id: 'aktarim-' + Date.now() + '-' + h.id,
+                        hasta_id: h.id,
+                        tc_no: h.tc_no,
+                        ad: h.ad,
+                        soyad: h.soyad,
+                        cinsiyet: h.cinsiyet || '',
+                        dogum_tarihi: h.dogum_tarihi,
+                        randevu_tarihi: h.randevu_tarihi,
+                        saat_dilimi: h.saat_dilimi,
+                        saat_baslangic: h.saat_baslangic || '',
+                        saat_bitis: h.saat_bitis || '',
+                        poliklinik: h.poliklinik,
+                        doktor: h.doktor || '',
+                        acil_durum: h.acil_durum || 'normal',
+                        alerji: h.alerji || '',
+                        durum: (h.randevu_durumu === 'iptal' || h.randevu_durumu === 'randevuya_gitmedi') ? '' : (h.randevu_durumu || '')
+                    };
+
+                    try {
+                        mevcutListe.push(aktarilanKayit);
+                        localStorage.setItem(RANDEVU_DEPO_ANAHTARI, JSON.stringify(mevcutListe));
+                    } catch (e) {
+                        // Depolama erişim hatası durumunda sessiz geç
+                    }
+
+                    window.location.href = 'randevular.html';
+                });
+
+                tr.querySelector('[data-sil]').addEventListener('click', function () {
+                    const hastaAdiTam = `${h.ad || ''} ${h.soyad || ''}`.trim();
+                    const onay = window.confirm(`${hastaAdiTam} adlı hastayı silmek istediğinize emin misiniz?`);
+                    if (!onay) return;
+
+                    hastalar = hastalar.filter(item => String(item.id) !== String(h.id));
+                    if (guncellenenId !== null && String(guncellenenId) === String(h.id)) {
+                        formuSifirla();
+                    }
+                    hastalariKaydet();
+                    hastaMesaj.textContent = `${hastaAdiTam} adlı hasta kaydı silindi.`;
+                    hastaMesaj.style.color = '#0f172a';
+                    tabloCiz();
+                });
+
+                hastaTabloGovde.appendChild(tr);
+            });
+        }
+
+        function formuSifirla() {
+            form.reset();
+            guncellenenId = null;
+            hastaCinsiyet.value = '';
+            hastaAcilDurum.value = 'normal';
+            hastaRandevuDurum.value = '';
+        }
+
+        formSifirlaBtn.addEventListener('click', function () {
+            formuSifirla();
+            hastaMesaj.textContent = '';
+        });
+
+        form.addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const tc = hastaTc.value.trim();
+            const ad = hastaAd.value.trim();
+            const soyad = hastaSoyad.value.trim();
+            const dogum = hastaDogum.value.trim();
+            const randevuTarihi = hastaRandevuTarihi.value.trim();
+            const saatDilimi = hastaSaatDilimi.value;
+            const poliklinik = hastaPoliklinik.value;
+
+            if (!/^\d{11}$/.test(tc)) {
+                hastaMesaj.textContent = 'T.C. Kimlik No zorunludur ve 11 haneli rakam olmalıdır.';
+                hastaMesaj.style.color = 'crimson';
+                hastaTc.focus();
+                return;
+            }
+            if (!ad) {
+                hastaMesaj.textContent = 'Hasta Adı zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaAd.focus();
+                return;
+            }
+            if (!soyad) {
+                hastaMesaj.textContent = 'Hasta Soyadı zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaSoyad.focus();
+                return;
+            }
+            if (!dogum) {
+                hastaMesaj.textContent = 'Doğum Tarihi zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaDogum.focus();
+                return;
+            }
+            if (!randevuTarihi) {
+                hastaMesaj.textContent = 'Randevu Tarihi zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaRandevuTarihi.focus();
+                return;
+            }
+            if (!saatDilimi) {
+                hastaMesaj.textContent = 'Saat Dilimi seçimi zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaSaatDilimi.focus();
+                return;
+            }
+            if (!poliklinik) {
+                hastaMesaj.textContent = 'Poliklinik seçimi zorunludur.';
+                hastaMesaj.style.color = 'crimson';
+                hastaPoliklinik.focus();
+                return;
+            }
+
+            const ayniTcVarMi = hastalar.some(item =>
+                String(item.tc_no ?? '').trim() === tc &&
+                (guncellenenId === null || String(item.id) !== String(guncellenenId))
+            );
+
+            if (ayniTcVarMi) {
+                hastaMesaj.textContent = `Bu T.C. kimlik numarasına (${tc}) sahip bir hasta kaydı zaten mevcut; tekrar eklenemez.`;
+                hastaMesaj.style.color = 'crimson';
+                hastaTc.focus();
+                return;
+            }
+
+            const kayitVerisi = {
+                id: guncellenenId ?? (hastalar.length > 0 ? Math.max(...hastalar.map(x => Number(x.id) || 0)) + 1 : 1),
+                tc_no: tc,
+                ad,
+                soyad,
+                cinsiyet: hastaCinsiyet.value,
+                dogum_tarihi: dogum,
+                randevu_tarihi: randevuTarihi,
+                saat_dilimi: saatDilimi,
+                saat_baslangic: hastaSaatBaslangic.value,
+                saat_bitis: hastaSaatBitis.value,
+                poliklinik,
+                doktor: hastaDoktor.value,
+                acil_durum: hastaAcilDurum.value,
+                alerji: hastaAlerji.value.trim(),
+                randevu_durumu: hastaRandevuDurum.value.trim()
+            };
+
+            if (guncellenenId !== null) {
+                hastalar = hastalar.map(item => item.id === guncellenenId ? kayitVerisi : item);
+                hastaMesaj.textContent = 'Hasta kaydı başarıyla güncellendi.';
+            } else {
+                hastalar.push(kayitVerisi);
+                hastaMesaj.textContent = 'Hastanız başarıyla kaydedildi.';
+            }
+
+            hastalariKaydet();
+            hastaMesaj.style.color = 'green';
+            guncellenenId = null;
+            tabloCiz();
+        });
+
+        window.addEventListener('pageshow', function () {
+            tabloCiz();
+        });
+
+        window.addEventListener('storage', function (e) {
+            if (e.key === RANDEVU_DEPO_ANAHTARI || e.key === HASTA_DEPO_ANAHTARI) {
+                tabloCiz();
+            }
+        });
+
+        tabloCiz();
+    </script>
+</body>
+</html>
