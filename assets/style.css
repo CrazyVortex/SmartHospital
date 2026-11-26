@@ -1,0 +1,212 @@
+:root {
+    --hospital-navy: #123052;
+    --hospital-navy-dark: #0b2038;
+    --hospital-blue: #2878b8;
+    --hospital-blue-light: #eaf4fb;
+    --hospital-text: #26384a;
+    --hospital-muted: #6b7c8f;
+    --hospital-border: #dce5ed;
+    --hospital-background: #f4f8fb;
+}
+
+body {
+    min-height: 100vh;
+    background: var(--hospital-background);
+    color: var(--hospital-text);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+.app-navbar {
+    background: var(--hospital-navy);
+    box-shadow: 0 2px 12px rgb(11 32 56 / 12%);
+}
+
+.app-navbar .navbar-brand,
+.app-navbar .nav-link {
+    color: #fff;
+}
+
+.app-navbar .navbar-brand {
+    font-weight: 700;
+    letter-spacing: 0.02em;
+}
+
+.app-navbar .nav-link {
+    color: rgb(255 255 255 / 78%);
+}
+
+.app-navbar .nav-link:hover,
+.app-navbar .nav-link:focus,
+.app-navbar .nav-link.active {
+    color: #fff;
+}
+
+.app-navbar .navbar-toggler {
+    border-color: rgb(255 255 255 / 35%);
+}
+
+.app-navbar .navbar-toggler-icon {
+    filter: brightness(0) invert(1);
+}
+
+.page-container {
+    max-width: 1180px;
+}
+
+.page-heading {
+    margin-bottom: 1.5rem;
+}
+
+.page-heading h1 {
+    color: var(--hospital-navy-dark);
+    font-size: clamp(1.65rem, 3vw, 2.15rem);
+    font-weight: 700;
+}
+
+.page-heading p,
+.text-muted-custom {
+    color: var(--hospital-muted);
+}
+
+.hospital-card {
+    border: 1px solid var(--hospital-border);
+    border-radius: 1rem;
+    box-shadow: 0 8px 24px rgb(18 48 82 / 5%);
+}
+
+.hospital-card .card-title {
+    color: var(--hospital-navy);
+    font-weight: 650;
+}
+
+.section-icon {
+    display: inline-flex;
+    width: 2.25rem;
+    height: 2.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.7rem;
+    background: var(--hospital-blue-light);
+    color: var(--hospital-blue);
+    font-size: 0.85rem;
+    font-weight: 700;
+}
+
+.form-label {
+    color: var(--hospital-text);
+    font-weight: 600;
+}
+
+.form-control,
+.form-select {
+    min-height: 2.8rem;
+    border-color: var(--hospital-border);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--hospital-blue);
+    box-shadow: 0 0 0 0.2rem rgb(40 120 184 / 15%);
+}
+
+.btn-primary {
+    --bs-btn-bg: var(--hospital-blue);
+    --bs-btn-border-color: var(--hospital-blue);
+    --bs-btn-hover-bg: #20689f;
+    --bs-btn-hover-border-color: #20689f;
+    --bs-btn-active-bg: #1b5b8d;
+    --bs-btn-active-border-color: #1b5b8d;
+}
+
+.btn-outline-primary {
+    --bs-btn-color: var(--hospital-blue);
+    --bs-btn-border-color: #aacbe4;
+    --bs-btn-hover-bg: var(--hospital-blue);
+    --bs-btn-hover-border-color: var(--hospital-blue);
+}
+
+.table {
+    --bs-table-color: var(--hospital-text);
+    --bs-table-border-color: var(--hospital-border);
+    vertical-align: middle;
+}
+
+.table thead th {
+    background: #f2f7fb;
+    color: var(--hospital-navy);
+    font-size: 0.875rem;
+    font-weight: 650;
+    white-space: nowrap;
+}
+
+.empty-state {
+    color: var(--hospital-muted);
+    text-align: center;
+}
+
+.empty-state td {
+    padding: 1.5rem 1rem;
+}
+
+.info-panel {
+    border: 1px solid #cfe3f2;
+    border-radius: 0.8rem;
+    background: var(--hospital-blue-light);
+    color: #355a78;
+}
+
+.suggestion-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.suggestion-list li {
+    padding: 0.85rem 0;
+    border-bottom: 1px solid var(--hospital-border);
+}
+
+.suggestion-list li:last-child {
+    border-bottom: 0;
+}
+
+.login-wrap {
+    width: min(100% - 2rem, 470px);
+    margin-inline: auto;
+}
+
+.login-main {
+    min-height: calc(100vh - 130px);
+}
+
+.login-heading h1 {
+    color: var(--hospital-navy-dark);
+}
+
+.login-brand-mark {
+    display: inline-flex;
+    width: 3.25rem;
+    height: 3.25rem;
+    align-items: center;
+    justify-content: center;
+    border-radius: 1rem;
+    background: var(--hospital-blue-light);
+    color: var(--hospital-blue);
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.app-footer {
+    color: var(--hospital-muted);
+    font-size: 0.875rem;
+}
+
+@media (max-width: 575.98px) {
+    .page-container {
+        padding-inline: 1rem;
+    }
+
+    .hospital-card .card-body {
+        padding: 1.15rem;
+    }
+}

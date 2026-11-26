@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="SmartHospital randevu oluşturma arayüzü">
+    <title>Randevular | SmartHospital</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg app-navbar">
+        <div class="container page-container">
+            <a class="navbar-brand" href="login.html">SmartHospital</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavigation" aria-controls="mainNavigation" aria-expanded="false" aria-label="Menüyü aç veya kapat">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="mainNavigation">
+                <div class="navbar-nav ms-auto">
+                    <a class="nav-link" href="login.html">Giriş</a>
+                    <a class="nav-link" href="yonetim.html">Yönetim</a>
+                    <a class="nav-link active" aria-current="page" href="randevular.html">Randevular</a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container page-container py-4 py-lg-5">
+        <header class="page-heading">
+            <p class="text-uppercase small fw-semibold text-primary mb-2">Hasta hizmetleri</p>
+            <h1>Randevu oluştur</h1>
+            <p class="mb-0">Poliklinik, doktor ve uygun bir zaman seçin.</p>
+        </header>
+
+        <div class="alert info-panel d-flex align-items-start gap-2 mb-4" role="note">
+            <span class="fw-bold" aria-hidden="true">i</span>
+            <p class="mb-0">Bu ekran örnek verilerle uygunluk kontrolü yapan bir demo arayüzüdür. Java randevu algoritmasına veya veritabanına bağlı değildir; burada oluşturulan randevular kaydedilmez.</p>
+        </div>
+
+        <div class="row g-4">
+            <div class="col-12 col-lg-7">
+                <section class="card hospital-card">
+                    <div class="card-body p-4 p-lg-5">
+                        <div class="d-flex align-items-center gap-3 mb-4">
+                            <span class="section-icon" aria-hidden="true">01</span>
+                            <div>
+                                <h2 class="h5 card-title mb-1">Randevu bilgileri</h2>
+                                <p class="small text-muted-custom mb-0">Tüm alanlar zorunludur.</p>
+                            </div>
+                        </div>
+                        <form data-demo-form data-scheduler-form novalidate>
+                            <div class="mb-3">
+                                <label for="appointmentClinic" class="form-label">Poliklinik</label>
+                                <select class="form-select" id="appointmentClinic" name="clinic" required>
+                                    <option value="" selected disabled>Poliklinik seçin</option>
+                                    <option value="demo-dahiliye">Örnek: Dahiliye (demo)</option>
+                                    <option value="demo-kardiyoloji">Örnek: Kardiyoloji (demo)</option>
+                                </select>
+                                <div class="invalid-feedback">Bir poliklinik seçin.</div>
+                            </div>
+                            <div class="mb-3">
+                                <label for="appointmentDoctor" class="form-label">Doktor</label>
+                                <select class="form-select" id="appointmentDoctor" name="doctor" required>
+                                    <option value="" selected disabled>Doktor seçin</option>
+                                    <option value="demo-doctor-1" data-clinic="demo-dahiliye">Örnek: Dr. Ayşe Yılmaz (demo)</option>
+                                    <option value="demo-doctor-2" data-clinic="demo-kardiyoloji">Örnek: Dr. Mehmet Demir (demo)</option>
+                                </select>
+                                <div class="invalid-feedback">Bir doktor seçin.</div>
+                            </div>
+                            <div class="row g-3 mb-4">
+                                <div class="col-sm-6">
+                                    <label for="appointmentDate" class="form-label">Tarih</label>
+                                    <input type="date" class="form-control" id="appointmentDate" name="date" data-no-past required>
+                                    <div class="invalid-feedback">Bugün veya ileri bir tarih seçin.</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <label for="appointmentTime" class="form-label">Saat</label>
+                                    <input type="time" class="form-control" id="appointmentTime" name="time" required>
+                                    <div class="invalid-feedback">Bir saat seçin.</div>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary btn-lg w-100">Randevu oluştur</button>
+                            <div class="alert alert-info mt-3 mb-0 d-none" role="status" aria-live="polite" data-form-feedback></div>
+                            <p class="form-text mb-0 mt-3">Doktor ve poliklinik seçenekleri demo amaçlıdır; randevunuz kaydedilmez.</p>
+                        </form>
+                    </div>
+                </section>
+            </div>
+
+            <div class="col-12 col-lg-5">
+                <aside class="card hospital-card h-100" aria-labelledby="suggestionsTitle">
+                    <div class="card-body p-4">
+                        <div class="d-flex align-items-center gap-3 mb-3">
+                            <span class="section-icon" aria-hidden="true">02</span>
+                            <div>
+                                <h2 class="h5 card-title mb-1" id="suggestionsTitle">Uygun saat önerileri</h2>
+                                <p class="small text-muted-custom mb-0">Seçtiğiniz tarih için demo saatleri</p>
+                            </div>
+                        </div>
+                        <ul class="suggestion-list" id="availableTimes" aria-live="polite">
+                            <li class="text-muted-custom">Poliklinik, doktor ve tarih seçince öneriler burada gösterilecek.</li>
+                        </ul>
+                        <div class="info-panel p-3 mt-3 small">
+                            Örnek randevu verileri yarın için tanımlıdır. İptal edilmiş demo randevular saati yeniden uygun bırakır.
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+    </main>
+
+    <footer class="app-footer text-center py-4">SmartHospital &copy; 2026</footer>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../assets/app.js" defer></script>
+</body>
+</html>
