@@ -1,0 +1,1014 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevu Listesi, Filtreleme, Sıralama ve Durum Yönetimi</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 24px;
+            background-color: #f4f7fa;
+            color: #1e293b;
+        }
+        .kart {
+            background: #ffffff;
+            border: 1px solid #cbd5e1;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 24px;
+            max-width: 1460px;
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.05);
+        }
+        .ust-satir {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .ust-satir h2 {
+            margin: 0;
+        }
+        .maske-grubu {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .renk-rehberi {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 16px;
+            padding: 10px 12px;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            align-items: center;
+        }
+        .kontrol-satir {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            align-items: flex-end;
+            margin-bottom: 14px;
+        }
+        .islem-blok {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            background: #f8fafc;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            padding: 10px;
+            min-width: 230px;
+            position: relative;
+        }
+        .islem-blok label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #0f172a;
+        }
+        .islem-blok select {
+            width: 100%;
+            padding: 9px 10px;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            box-sizing: border-box;
+            font-size: 13px;
+            background: #ffffff;
+        }
+        .acilir-kutu-wrap {
+            position: relative;
+        }
+        .acilir-tetikleyici {
+            width: 100%;
+            padding: 9px 11px;
+            background-color: #ffffff;
+            color: #0f172a;
+            border: 1px solid #94a3b8;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: normal;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            box-sizing: border-box;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .acilir-tetikleyici:hover {
+            background-color: #f1f5f9;
+            border-color: #64748b;
+        }
+        .ok-simge {
+            margin-left: 8px;
+            font-size: 11px;
+            color: #334155;
+            flex-shrink: 0;
+        }
+        .acilir-menu {
+            display: none;
+            position: absolute;
+            top: calc(100% + 4px);
+            left: 0;
+            right: 0;
+            min-width: 265px;
+            max-height: 330px;
+            overflow-y: auto;
+            background: #ffffff;
+            border: 1px solid #94a3b8;
+            border-radius: 8px;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.14);
+            padding: 6px 8px;
+            z-index: 50;
+        }
+        .acilir-menu.acik {
+            display: block;
+        }
+        .grup-baslik {
+            font-size: 11px;
+            font-weight: bold;
+            color: #475569;
+            text-transform: uppercase;
+            padding: 7px 6px 3px 6px;
+            margin-top: 4px;
+            border-top: 1px solid #e2e8f0;
+            letter-spacing: 0.3px;
+        }
+        .grup-baslik:first-child {
+            border-top: none;
+            margin-top: 0;
+            padding-top: 3px;
+        }
+        .secenek-satir {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 5px 6px 5px 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            color: #1e293b;
+            cursor: pointer;
+            user-select: none;
+        }
+        .secenek-satir.ana-satir {
+            padding-left: 6px;
+            font-weight: bold;
+        }
+        .secenek-satir:hover {
+            background-color: #f1f5f9;
+        }
+        .secenek-satir input[type="checkbox"] {
+            width: 15px;
+            height: 15px;
+            margin: 0;
+            accent-color: #0284c7;
+            cursor: pointer;
+        }
+        .yan-yana-butonlar {
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+        button {
+            padding: 9px 14px;
+            background-color: #0284c7;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        button:hover {
+            background-color: #0369a1;
+        }
+        .btn-sirala {
+            background-color: #0369a1;
+        }
+        .btn-sirala:hover {
+            background-color: #075985;
+        }
+        .btn-sirala.aktif {
+            background-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.28);
+            outline: 2px solid #1e3a8a;
+        }
+        .btn-filtre {
+            background-color: #0284c7;
+        }
+        .btn-filtre.aktif {
+            background-color: #1d4ed8;
+            box-shadow: 0 0 0 3px rgba(29, 78, 216, 0.28);
+            outline: 2px solid #1e3a8a;
+        }
+        .btn-durum-filtre {
+            background-color: #7c3aed;
+        }
+        .btn-durum-filtre:hover {
+            background-color: #6d28d9;
+        }
+        .btn-durum-filtre.aktif {
+            background-color: #5b21b6;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.3);
+            outline: 2px solid #4c1d95;
+        }
+        .btn-acik {
+            background-color: #0f766e;
+        }
+        .btn-acik:hover {
+            background-color: #115e59;
+        }
+        .btn-acik.aktif {
+            background-color: #15803d;
+            box-shadow: 0 0 0 3px rgba(21, 128, 61, 0.28);
+            outline: 2px solid #064e3b;
+        }
+        .btn-mor {
+            background-color: #4f46e5;
+        }
+        .btn-mor:hover {
+            background-color: #4338ca;
+        }
+        .btn-muayene {
+            background-color: #0284c7;
+        }
+        .btn-muayene.aktif-durum {
+            box-shadow: 0 0 0 2px #0f172a;
+        }
+        .btn-tamam {
+            background-color: #15803d;
+        }
+        .btn-tamam.aktif-durum {
+            box-shadow: 0 0 0 2px #0f172a;
+        }
+        .btn-iptal {
+            background-color: #b91c1c;
+        }
+        .btn-iptal.aktif-durum {
+            box-shadow: 0 0 0 2px #0f172a;
+        }
+        .sira-no {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: #0f172a;
+            color: #ffffff;
+            font-weight: bold;
+            font-size: 12px;
+        }
+        .rozet {
+            display: inline-block;
+            padding: 5px 11px;
+            border-radius: 999px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-right: 4px;
+            margin-bottom: 2px;
+        }
+        .durum-bekliyor {
+            background-color: #fef08a;
+            color: #713f12;
+            border: 1px solid #eab308;
+        }
+        .durum-muayenede {
+            background-color: #bae6fd;
+            color: #0c4a6e;
+            border: 1px solid #0284c7;
+        }
+        .durum-tamamlandi {
+            background-color: #bbf7d0;
+            color: #14532d;
+            border: 1px solid #16a34a;
+        }
+        .durum-iptal {
+            background-color: #fecaca;
+            color: #7f1d1d;
+            border: 1px solid #dc2626;
+        }
+        .grup-cocuk {
+            background-color: #fce7f3;
+            color: #9d174d;
+            border: 1px solid #f472b6;
+        }
+        .grup-yetiskin {
+            background-color: #e0f2fe;
+            color: #075985;
+            border: 1px solid #38bdf8;
+        }
+        .grup-yasli {
+            background-color: #fef3c7;
+            color: #92400e;
+            border: 1px solid #f59e0b;
+        }
+        .uyari-acil {
+            background-color: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #ef4444;
+        }
+        .uyari-alerji {
+            background-color: #ffedd5;
+            color: #9a3412;
+            border: 1px solid #f97316;
+        }
+        tr.satir-acil {
+            background-color: #fef2f2;
+            border-left: 6px solid #dc2626;
+        }
+        tr.satir-cocuk {
+            background-color: #fdf2f8;
+            border-left: 6px solid #ec4899;
+        }
+        tr.satir-yasli {
+            background-color: #fffbeb;
+            border-left: 6px solid #d97706;
+        }
+        tr.satir-bekliyor {
+            background-color: #fefce8;
+            border-left: 6px solid #eab308;
+        }
+        tr.satir-muayenede {
+            background-color: #f0f9ff;
+            border-left: 6px solid #0284c7;
+        }
+        tr.satir-tamamlandi {
+            background-color: #f0fdf4;
+            border-left: 6px solid #16a34a;
+        }
+        tr.satir-iptal {
+            background-color: #fef2f2;
+            border-left: 6px solid #dc2626;
+        }
+        #durumMesaj {
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: #ffffff;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 10px 11px;
+            text-align: left;
+            font-size: 13px;
+        }
+        th {
+            background-color: #e2e8f0;
+            color: #0f172a;
+            font-weight: bold;
+        }
+        .aksiyon-hucre {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="kart">
+        <div class="ust-satir">
+            <h2>Randevu Listesi, Filtreleme, Sıralama ve Durum Yönetimi</h2>
+            <div class="maske-grubu">
+                <button type="button" id="tcMaskeBtn" class="btn-mor">T.C. Maskesini Aç</button>
+                <button type="button" id="adMaskeBtn" class="btn-mor">Ad Maskesini Aç</button>
+                <button type="button" id="soyadMaskeBtn" class="btn-mor">Soyad Maskesini Aç</button>
+            </div>
+        </div>
+
+        <div class="renk-rehberi">
+            <strong>Renk / Etiket Rehberi:</strong>
+            <span class="rozet uyari-acil">ACİL / ÖNCELİKLİ</span>
+            <span class="rozet grup-cocuk">ÇOCUK (&lt;18)</span>
+            <span class="rozet grup-yasli">65+ YAŞLI</span>
+            <span class="rozet grup-yetiskin">YETİŞKİN</span>
+            <span class="rozet uyari-alerji">ALERJİ UYARISI</span>
+            <span class="rozet durum-bekliyor">Bekliyor</span>
+            <span class="rozet durum-muayenede">Muayenede</span>
+            <span class="rozet durum-tamamlandi">Tamamlandı</span>
+            <span class="rozet durum-iptal">İptal</span>
+        </div>
+
+        <div class="kontrol-satir">
+            <div class="islem-blok">
+                <label>Filtreleme Ölçütleri</label>
+                <div class="acilir-kutu-wrap" id="filtreAcilirWrap">
+                    <button type="button" class="acilir-tetikleyici" id="filtreAcilirBtn">
+                        <span id="filtreSecimMetni">Ölçüt Seçiniz</span>
+                        <span class="ok-simge">▼</span>
+                    </button>
+                    <div class="acilir-menu" id="filtreAcilirMenu">
+                        <div class="grup-baslik">Genel Ölçütler</div>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="acil"> Acil Durum</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="alerji"> Alerji Bilgisi</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="cocuk"> Çocuk (&lt;18)</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="yasli"> 65+ Yaşlı</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="yetiskin"> Yetişkin</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="sabah"> Sabah (12:00 öncesi)</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="ogleden_sonra"> Öğleden Sonra (12:00+)</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="poliklinik_dolu"> Poliklinik Dolu Olanlar</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" data-grup="genel" value="doktor_dolu"> Doktor Seçili Olanlar</label>
+
+                        <div class="grup-baslik">Cinsiyet</div>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="cinsiyet" value="kadin"> Kız / Kadın Hastalar</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="cinsiyet" value="erkek"> Erkek Hastalar</label>
+
+                        <div class="grup-baslik">Poliklinik</div>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="poliklinik" value="Dahiliye"> Dahiliye</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="poliklinik" value="Çocuk Sağlığı ve Hastalıkları"> Çocuk Sağlığı ve Hastalıkları</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="poliklinik" value="Kardiyoloji"> Kardiyoloji</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="poliklinik" value="Ortopedi ve Travmatoloji"> Ortopedi ve Travmatoloji</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="poliklinik" value="Göz Hastalıkları"> Göz Hastalıkları</label>
+
+                        <div class="grup-baslik">Doktor</div>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="doktor" value="Uzm. Dr. Selin Demir"> Uzm. Dr. Selin Demir</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="doktor" value="Uzm. Dr. Kerem Kaya"> Uzm. Dr. Kerem Kaya</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="doktor" value="Doç. Dr. Hakan Arslan"> Doç. Dr. Hakan Arslan</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="doktor" value="Op. Dr. Deniz Yıldız"> Op. Dr. Deniz Yıldız</label>
+                        <label class="secenek-satir"><input type="checkbox" data-grup="doktor" value="Uzm. Dr. Elif Koç"> Uzm. Dr. Elif Koç</label>
+                    </div>
+                </div>
+                <button type="button" id="filtreleBtn" class="btn-filtre">Filtrele</button>
+            </div>
+
+            <div class="islem-blok">
+                <label>Durum Filtresi</label>
+                <div class="acilir-kutu-wrap" id="durumAcilirWrap">
+                    <button type="button" class="acilir-tetikleyici" id="durumAcilirBtn">
+                        <span id="durumSecimMetni">Durum Seçiniz</span>
+                        <span class="ok-simge">▼</span>
+                    </button>
+                    <div class="acilir-menu" id="durumAcilirMenu">
+                        <label class="secenek-satir ana-satir"><input type="checkbox" value="bekliyor"> Bekliyor</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" value="muayenede"> Muayenede</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" value="tamamlandi"> Tamamlandı</label>
+                        <label class="secenek-satir ana-satir"><input type="checkbox" value="iptal"> İptal</label>
+                    </div>
+                </div>
+                <button type="button" id="durumFiltreleBtn" class="btn-durum-filtre">Duruma Göre Filtrele</button>
+            </div>
+
+            <div class="islem-blok">
+                <label for="siralamaOlcutu">Sıralama Ölçütü</label>
+                <select id="siralamaOlcutu">
+                    <option value="sira">Sıra No (Varsayılan)</option>
+                    <option value="acil">Önce Acil Durum</option>
+                    <option value="yas_buyuk">Yaş (En Yaşlı Önce / 65+)</option>
+                    <option value="yas_kucuk">Yaş (En Genç Önce / Çocuk)</option>
+                    <option value="tarih">Randevu Tarihi</option>
+                    <option value="ad">Hasta Adı (A - Z)</option>
+                    <option value="durum">Randevu Durumu</option>
+                </select>
+                <button type="button" id="siralaBtn" class="btn-sirala">Sırala</button>
+            </div>
+        </div>
+
+        <div class="yan-yana-butonlar">
+            <button type="button" id="bugunBtn" class="btn-acik">Bugün</button>
+        </div>
+
+        <div id="durumMesaj"></div>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Sıra No</th>
+                    <th>T.C. No</th>
+                    <th>Ad</th>
+                    <th>Soyad</th>
+                    <th>Doğum Tarihi / Yaş</th>
+                    <th>Randevu Tarihi</th>
+                    <th>Saat Dilimi / Aralığı</th>
+                    <th>Poliklinik</th>
+                    <th>Doktor</th>
+                    <th>Alerji / Acil</th>
+                    <th>Durum</th>
+                    <th>İşlemler</th>
+                </tr>
+            </thead>
+            <tbody id="randevuTabloGovde">
+                <tr>
+                    <td colspan="12">-</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        const RANDEVU_DEPO_ANAHTARI = 'smarthospital_aktarilan_randevular';
+        const HASTA_DEPO_ANAHTARI = 'smarthospital_kayitli_hastalar';
+
+        const tcMaskeBtn = document.getElementById('tcMaskeBtn');
+        const adMaskeBtn = document.getElementById('adMaskeBtn');
+        const soyadMaskeBtn = document.getElementById('soyadMaskeBtn');
+
+        const filtreAcilirWrap = document.getElementById('filtreAcilirWrap');
+        const filtreAcilirBtn = document.getElementById('filtreAcilirBtn');
+        const filtreAcilirMenu = document.getElementById('filtreAcilirMenu');
+        const filtreSecimMetni = document.getElementById('filtreSecimMetni');
+        const filtreKutulari = Array.from(filtreAcilirMenu.querySelectorAll('input[type="checkbox"]'));
+
+        const durumAcilirWrap = document.getElementById('durumAcilirWrap');
+        const durumAcilirBtn = document.getElementById('durumAcilirBtn');
+        const durumAcilirMenu = document.getElementById('durumAcilirMenu');
+        const durumSecimMetni = document.getElementById('durumSecimMetni');
+        const durumKutulari = Array.from(durumAcilirMenu.querySelectorAll('input[type="checkbox"]'));
+
+        const filtreleBtn = document.getElementById('filtreleBtn');
+        const durumFiltreleBtn = document.getElementById('durumFiltreleBtn');
+        const siralamaOlcutu = document.getElementById('siralamaOlcutu');
+        const siralaBtn = document.getElementById('siralaBtn');
+
+        const bugunBtn = document.getElementById('bugunBtn');
+        const durumMesaj = document.getElementById('durumMesaj');
+        const tabloGovde = document.getElementById('randevuTabloGovde');
+
+        let tumRandevular = [];
+        let aktifListe = [];
+
+        let bugunAktif = false;
+        let filtreAktif = false;
+        let durumFiltreAktif = false;
+        let siralaAktif = false;
+
+        let tcMaskeli = true;
+        let adMaskeli = true;
+        let soyadMaskeli = true;
+
+        const saatDilimiEtiketleri = {
+            sabah: 'Sabah (12:00 öncesi)',
+            ogleden_sonra: 'Öğleden Sonra (12:00 ve sonrası)'
+        };
+
+        const durumEtiketleri = {
+            bekliyor: 'Bekliyor',
+            muayenede: 'Muayenede',
+            tamamlandi: 'Tamamlandı',
+            iptal: 'İptal',
+            randevuya_gitmedi: 'Randevuya Gitmedi'
+        };
+
+        function bugunTarihStr() {
+            const simdi = new Date();
+            const yil = simdi.getFullYear();
+            const ay = String(simdi.getMonth() + 1).padStart(2, '0');
+            const gun = String(simdi.getDate()).padStart(2, '0');
+            return `${yil}-${ay}-${gun}`;
+        }
+
+        function butonGorunumleriniGuncelle() {
+            bugunBtn.classList.toggle('aktif', bugunAktif);
+            bugunBtn.textContent = bugunAktif ? 'Bugün (Aktif)' : 'Bugün';
+
+            filtreleBtn.classList.toggle('aktif', filtreAktif);
+            filtreleBtn.textContent = filtreAktif ? 'Filtrele (Aktif)' : 'Filtrele';
+
+            durumFiltreleBtn.classList.toggle('aktif', durumFiltreAktif);
+            durumFiltreleBtn.textContent = durumFiltreAktif ? 'Duruma Göre Filtrele (Aktif)' : 'Duruma Göre Filtrele';
+
+            siralaBtn.classList.toggle('aktif', siralaAktif);
+            siralaBtn.textContent = siralaAktif ? 'Sırala (Aktif)' : 'Sırala';
+        }
+
+        function randevulariYukle() {
+            try {
+                const raw = localStorage.getItem(RANDEVU_DEPO_ANAHTARI);
+                const parsed = raw ? JSON.parse(raw) : [];
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                return [];
+            }
+        }
+
+        function randevulariKaydet() {
+            try {
+                localStorage.setItem(RANDEVU_DEPO_ANAHTARI, JSON.stringify(tumRandevular));
+            } catch (e) {
+                // Depolama hatası durumunda sessiz geç
+            }
+        }
+
+        function hastaKaydindaDurumGuncelle(randevuKaydi, yeniDurum) {
+            try {
+                const raw = localStorage.getItem(HASTA_DEPO_ANAHTARI);
+                const hastalar = raw ? JSON.parse(raw) : [];
+                if (!Array.isArray(hastalar)) return;
+
+                const tcHedef = String(randevuKaydi.tc_no ?? '').trim();
+                if (!tcHedef) return;
+
+                const guncelHastalar = hastalar.map(h => {
+                    if (String(h.tc_no ?? '').trim() === tcHedef) {
+                        return { ...h, randevu_durumu: yeniDurum };
+                    }
+                    return h;
+                });
+
+                localStorage.setItem(HASTA_DEPO_ANAHTARI, JSON.stringify(guncelHastalar));
+            } catch (e) {
+                // Depolama hatası durumunda sessiz geç
+            }
+        }
+
+        function seciliFiltreGruplariAl() {
+            const gruplar = {
+                genel: [],
+                cinsiyet: [],
+                poliklinik: [],
+                doktor: []
+            };
+
+            filtreKutulari.forEach(chk => {
+                if (!chk.checked) return;
+                const grup = chk.dataset.grup || 'genel';
+                if (!gruplar[grup]) gruplar[grup] = [];
+                gruplar[grup].push(chk.value);
+            });
+
+            return gruplar;
+        }
+
+        function seciliDurumlariAl() {
+            return durumKutulari.filter(chk => chk.checked).map(chk => chk.value);
+        }
+
+        function secimMetniniGuncelle() {
+            const seciliEtiketler = filtreKutulari
+                .filter(chk => chk.checked)
+                .map(chk => chk.parentElement.textContent.trim());
+
+            if (seciliEtiketler.length === 0) {
+                filtreSecimMetni.textContent = 'Ölçüt Seçiniz';
+            } else if (seciliEtiketler.length <= 2) {
+                filtreSecimMetni.textContent = seciliEtiketler.join(', ');
+            } else {
+                filtreSecimMetni.textContent = `${seciliEtiketler.length} ölçüt seçildi`;
+            }
+
+            const seciliDurumEtiketler = durumKutulari
+                .filter(chk => chk.checked)
+                .map(chk => chk.parentElement.textContent.trim());
+
+            if (seciliDurumEtiketler.length === 0) {
+                durumSecimMetni.textContent = 'Durum Seçiniz';
+            } else if (seciliDurumEtiketler.length <= 2) {
+                durumSecimMetni.textContent = seciliDurumEtiketler.join(', ');
+            } else {
+                durumSecimMetni.textContent = `${seciliDurumEtiketler.length} durum seçildi`;
+            }
+        }
+
+        filtreAcilirBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            durumAcilirMenu.classList.remove('acik');
+            filtreAcilirMenu.classList.toggle('acik');
+        });
+
+        durumAcilirBtn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            filtreAcilirMenu.classList.remove('acik');
+            durumAcilirMenu.classList.toggle('acik');
+        });
+
+        filtreKutulari.forEach(chk => {
+            chk.addEventListener('change', secimMetniniGuncelle);
+        });
+
+        durumKutulari.forEach(chk => {
+            chk.addEventListener('change', secimMetniniGuncelle);
+        });
+
+        document.addEventListener('click', function (e) {
+            if (!filtreAcilirWrap.contains(e.target)) {
+                filtreAcilirMenu.classList.remove('acik');
+            }
+            if (!durumAcilirWrap.contains(e.target)) {
+                durumAcilirMenu.classList.remove('acik');
+            }
+        });
+
+        function tcMaskele(tc) {
+            const s = String(tc ?? '').trim();
+            if (!s) return '-';
+            if (!tcMaskeli) return s;
+            if (s.length >= 11) {
+                return `${s.slice(0, 3)}*****${s.slice(-3)}`;
+            }
+            return '*'.repeat(s.length);
+        }
+
+        function tekKelimeMaskele(kelime, maskeliMi) {
+            const temiz = String(kelime ?? '').trim();
+            if (!temiz || temiz === '-') return '-';
+            if (!maskeliMi) return temiz;
+            if (temiz.length <= 1) return temiz;
+            return `${temiz[0]}${'*'.repeat(Math.min(temiz.length - 1, 4))}`;
+        }
+
+        function yasGrubuHesapla(kayit) {
+            const dogumStr = kayit.dogum_tarihi ?? '';
+            if (!dogumStr) return { yas: null, kod: 'yetiskin', etiket: '-' };
+            const d = new Date(dogumStr);
+            if (Number.isNaN(d.getTime())) return { yas: null, kod: 'yetiskin', etiket: '-' };
+
+            const bugun = new Date();
+            let yas = bugun.getFullYear() - d.getFullYear();
+            const m = bugun.getMonth() - d.getMonth();
+            if (m < 0 || (m === 0 && bugun.getDate() < d.getDate())) {
+                yas--;
+            }
+            if (yas < 0) yas = 0;
+
+            if (yas < 18) return { yas, kod: 'cocuk', etiket: `Çocuk (${yas})` };
+            if (yas >= 65) return { yas, kod: 'yasli', etiket: `65+ (${yas})` };
+            return { yas, kod: 'yetiskin', etiket: `Yetişkin (${yas})` };
+        }
+
+        function saatBilgisiOlustur(r) {
+            const dilimMetin = saatDilimiEtiketleri[r.saat_dilimi] || (r.saat_dilimi || '-');
+            const aralik = (r.saat_baslangic || r.saat_bitis)
+                ? ` (${r.saat_baslangic || '--:--'} - ${r.saat_bitis || '--:--'})`
+                : '';
+            return `${dilimMetin}${aralik}`;
+        }
+
+        function klinikBilgiOlustur(r) {
+            const parcalar = [];
+            if (String(r.acil_durum ?? '').toLowerCase() === 'acil') {
+                parcalar.push('<span class="rozet uyari-acil">ACİL</span>');
+            }
+            const alerji = String(r.alerji ?? '').trim();
+            if (alerji) {
+                parcalar.push(`<span class="rozet uyari-alerji">Alerji: ${alerji}</span>`);
+            }
+            return parcalar.length > 0 ? parcalar.join(' ') : '-';
+        }
+
+        function durumRozetiOlustur(durum) {
+            const norm = String(durum ?? '').trim().toLowerCase();
+            if (!norm) return '-';
+            const etiket = durumEtiketleri[norm] || durum;
+            return `<span class="rozet durum-${norm}">${etiket}</span>`;
+        }
+
+        function listeyiSirala(liste) {
+            if (!siralaAktif) return [...liste];
+
+            const olcut = siralamaOlcutu.value;
+            const kopya = [...liste];
+
+            if (olcut === 'acil') {
+                return kopya.sort((a, b) => {
+                    const aAcil = String(a.acil_durum ?? '').toLowerCase() === 'acil' ? 1 : 0;
+                    const bAcil = String(b.acil_durum ?? '').toLowerCase() === 'acil' ? 1 : 0;
+                    return bAcil - aAcil;
+                });
+            }
+            if (olcut === 'yas_buyuk') {
+                return kopya.sort((a, b) => (yasGrubuHesapla(b).yas ?? -1) - (yasGrubuHesapla(a).yas ?? -1));
+            }
+            if (olcut === 'yas_kucuk') {
+                return kopya.sort((a, b) => (yasGrubuHesapla(a).yas ?? 9999) - (yasGrubuHesapla(b).yas ?? 9999));
+            }
+            if (olcut === 'tarih') {
+                return kopya.sort((a, b) => String(a.randevu_tarihi ?? '').localeCompare(String(b.randevu_tarihi ?? '')));
+            }
+            if (olcut === 'ad') {
+                return kopya.sort((a, b) => String(a.ad ?? '').toLocaleLowerCase('tr').localeCompare(String(b.ad ?? '').toLocaleLowerCase('tr'), 'tr'));
+            }
+            if (olcut === 'durum') {
+                return kopya.sort((a, b) => String(a.durum ?? '').localeCompare(String(b.durum ?? '')));
+            }
+            return kopya;
+        }
+
+        function filtreleVeCiz() {
+            const gruplar = filtreAktif ? seciliFiltreGruplariAl() : { genel: [], cinsiyet: [], poliklinik: [], doktor: [] };
+            const seciliDurumlar = durumFiltreAktif ? seciliDurumlariAl() : [];
+            const bugunStr = bugunTarihStr();
+
+            const filtrelenmis = tumRandevular.filter(r => {
+                const tarih = String(r.randevu_tarihi ?? '');
+                const grup = yasGrubuHesapla(r);
+                const acil = String(r.acil_durum ?? '').toLowerCase() === 'acil';
+                const alerji = String(r.alerji ?? '').trim();
+                const dilim = String(r.saat_dilimi ?? '');
+                const pol = String(r.poliklinik ?? '').trim();
+                const dok = String(r.doktor ?? '').trim();
+                const cinsiyet = String(r.cinsiyet ?? '').trim().toLowerCase();
+                const durum = String(r.durum ?? '').trim().toLowerCase();
+
+                if (bugunAktif && tarih !== bugunStr) {
+                    return false;
+                }
+
+                if (durumFiltreAktif && seciliDurumlar.length > 0) {
+                    if (!seciliDurumlar.includes(durum)) return false;
+                }
+
+                for (const olcut of gruplar.genel) {
+                    if (olcut === 'acil' && !acil) return false;
+                    if (olcut === 'alerji' && !alerji) return false;
+                    if (olcut === 'cocuk' && grup.kod !== 'cocuk') return false;
+                    if (olcut === 'yasli' && grup.kod !== 'yasli') return false;
+                    if (olcut === 'yetiskin' && grup.kod !== 'yetiskin') return false;
+                    if (olcut === 'sabah' && dilim !== 'sabah') return false;
+                    if (olcut === 'ogleden_sonra' && dilim !== 'ogleden_sonra') return false;
+                    if (olcut === 'poliklinik_dolu' && !pol) return false;
+                    if (olcut === 'doktor_dolu' && !dok) return false;
+                }
+
+                if (gruplar.cinsiyet.length > 0) {
+                    if (!gruplar.cinsiyet.includes(cinsiyet)) return false;
+                }
+
+                if (gruplar.poliklinik.length > 0) {
+                    if (!gruplar.poliklinik.includes(pol)) return false;
+                }
+
+                if (gruplar.doktor.length > 0) {
+                    if (!gruplar.doktor.includes(dok)) return false;
+                }
+
+                return true;
+            });
+
+            aktifListe = listeyiSirala(filtrelenmis);
+            tabloyuCiz(aktifListe);
+        }
+
+        function durumGuncelle(kayitId, tiklananDurum) {
+            const index = tumRandevular.findIndex(item => item.id === kayitId);
+            if (index === -1) return;
+
+            const kayit = tumRandevular[index];
+            const mevcutDurum = String(kayit.durum ?? '').trim().toLowerCase();
+
+            if (tiklananDurum === 'iptal') {
+                hastaKaydindaDurumGuncelle(kayit, 'randevuya_gitmedi');
+                tumRandevular.splice(index, 1);
+                randevulariKaydet();
+                durumMesaj.textContent = 'Randevu listesinden kaldırıldı; hasta kayıtta "Randevuya Gitmedi" olarak güncellendi.';
+                durumMesaj.style.color = '#0f172a';
+                filtreleVeCiz();
+                return;
+            }
+
+            if (mevcutDurum === tiklananDurum) {
+                kayit.durum = '';
+                randevulariKaydet();
+                hastaKaydindaDurumGuncelle(kayit, '');
+                durumMesaj.textContent = `${durumEtiketleri[tiklananDurum] || tiklananDurum} seçimi geri alındı.`;
+                durumMesaj.style.color = '#0f172a';
+                filtreleVeCiz();
+                return;
+            }
+
+            kayit.durum = tiklananDurum;
+            randevulariKaydet();
+            hastaKaydindaDurumGuncelle(kayit, tiklananDurum);
+            durumMesaj.textContent = `Durum güncellendi: ${durumEtiketleri[tiklananDurum] || tiklananDurum}.`;
+            durumMesaj.style.color = 'green';
+            filtreleVeCiz();
+        }
+
+        function tabloyuCiz(liste) {
+            tabloGovde.innerHTML = '';
+
+            if (!Array.isArray(liste) || liste.length === 0) {
+                tabloGovde.innerHTML = '<tr><td colspan="12">-</td></tr>';
+                return;
+            }
+
+            liste.forEach((r, index) => {
+                const satir = document.createElement('tr');
+                const siraNo = `S-${String(index + 1).padStart(2, '0')}`;
+                const grup = yasGrubuHesapla(r);
+                const durumDegeri = String(r.durum ?? '').trim().toLowerCase();
+                const acil = String(r.acil_durum ?? '').toLowerCase() === 'acil';
+
+                if (acil) {
+                    satir.className = 'satir-acil';
+                } else if (grup.kod === 'cocuk') {
+                    satir.className = 'satir-cocuk';
+                } else if (grup.kod === 'yasli') {
+                    satir.className = 'satir-yasli';
+                } else if (durumDegeri) {
+                    satir.className = `satir-${durumDegeri}`;
+                }
+
+                const dogumGoster = r.dogum_tarihi
+                    ? `${r.dogum_tarihi}${grup.yas !== null ? ` <span class="rozet grup-${grup.kod}">${grup.etiket}</span>` : ''}`
+                    : '-';
+
+                satir.innerHTML = `
+                    <td><span class="sira-no">${siraNo}</span></td>
+                    <td>${tcMaskele(r.tc_no)}</td>
+                    <td><strong>${tekKelimeMaskele(r.ad, adMaskeli)}</strong></td>
+                    <td><strong>${tekKelimeMaskele(r.soyad, soyadMaskeli)}</strong></td>
+                    <td>${dogumGoster}</td>
+                    <td>${r.randevu_tarihi || '-'}</td>
+                    <td>${saatBilgisiOlustur(r)}</td>
+                    <td>${r.poliklinik || '-'}</td>
+                    <td>${r.doktor || '-'}</td>
+                    <td>${klinikBilgiOlustur(r)}</td>
+                    <td>${durumRozetiOlustur(durumDegeri)}</td>
+                    <td>
+                        <div class="aksiyon-hucre">
+                            <button type="button" class="btn-muayene ${durumDegeri === 'muayenede' ? 'aktif-durum' : ''}" data-durum="muayenede">Muayeneye Al</button>
+                            <button type="button" class="btn-tamam ${durumDegeri === 'tamamlandi' ? 'aktif-durum' : ''}" data-durum="tamamlandi">Tamamlandı</button>
+                            <button type="button" class="btn-iptal" data-durum="iptal">İptal Et</button>
+                        </div>
+                    </td>
+                `;
+
+                satir.querySelectorAll('button[data-durum]').forEach(btn => {
+                    btn.addEventListener('click', function () {
+                        durumGuncelle(r.id, this.dataset.durum);
+                    });
+                });
+
+                tabloGovde.appendChild(satir);
+            });
+        }
+
+        tcMaskeBtn.addEventListener('click', function () {
+            tcMaskeli = !tcMaskeli;
+            tcMaskeBtn.textContent = tcMaskeli ? 'T.C. Maskesini Aç' : 'T.C. Maskele';
+            tabloyuCiz(aktifListe);
+        });
+
+        adMaskeBtn.addEventListener('click', function () {
+            adMaskeli = !adMaskeli;
+            adMaskeBtn.textContent = adMaskeli ? 'Ad Maskesini Aç' : 'Ad Maskele';
+            tabloyuCiz(aktifListe);
+        });
+
+        soyadMaskeBtn.addEventListener('click', function () {
+            soyadMaskeli = !soyadMaskeli;
+            soyadMaskeBtn.textContent = soyadMaskeli ? 'Soyad Maskesini Aç' : 'Soyad Maskele';
+            tabloyuCiz(aktifListe);
+        });
+
+        filtreleBtn.addEventListener('click', function () {
+            filtreAcilirMenu.classList.remove('acik');
+            filtreAktif = !filtreAktif;
+            butonGorunumleriniGuncelle();
+            filtreleVeCiz();
+        });
+
+        durumFiltreleBtn.addEventListener('click', function () {
+            durumAcilirMenu.classList.remove('acik');
+            durumFiltreAktif = !durumFiltreAktif;
+            butonGorunumleriniGuncelle();
+            filtreleVeCiz();
+        });
+
+        siralaBtn.addEventListener('click', function () {
+            siralaAktif = !siralaAktif;
+            butonGorunumleriniGuncelle();
+            filtreleVeCiz();
+        });
+
+        siralamaOlcutu.addEventListener('change', function () {
+            if (siralaAktif) {
+                filtreleVeCiz();
+            }
+        });
+
+        bugunBtn.addEventListener('click', function () {
+            bugunAktif = !bugunAktif;
+            butonGorunumleriniGuncelle();
+            filtreleVeCiz();
+        });
+
+        function listeyiDepodanSenkronizeEt() {
+            tumRandevular = randevulariYukle();
+            filtreleVeCiz();
+        }
+
+        window.addEventListener('pageshow', listeyiDepodanSenkronizeEt);
+        window.addEventListener('storage', function (e) {
+            if (e.key === RANDEVU_DEPO_ANAHTARI) {
+                listeyiDepodanSenkronizeEt();
+            }
+        });
+
+        butonGorunumleriniGuncelle();
+        listeyiDepodanSenkronizeEt();
+    </script>
+</body>
+</html>
