@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Akıllı Hastane Otomasyonu | Kurumsal Ana Sayfa</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <style>
+    :root {
+      --hospital-navy: #0f4c81;
+      --hospital-dark: #09355c;
+      --hospital-light: #f4f7fb;
+      --hospital-accent: #e8f1fa;
+    }
+
+    body {
+      background-color: var(--hospital-light);
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      color: #1f2937;
+    }
+
+    /* Kurumsal Üst Menü */
+    .navbar-hospital {
+      background: linear-gradient(135deg, var(--hospital-navy) 0%, var(--hospital-dark) 100%);
+      box-shadow: 0 4px 12px rgba(15, 76, 129, 0.18);
+      padding-top: 0.9rem;
+      padding-bottom: 0.9rem;
+    }
+
+    .navbar-brand {
+      font-size: 1.45rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      color: #ffffff !important;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .navbar-brand i {
+      font-size: 1.65rem;
+      color: #7cc4fa;
+    }
+
+    .navbar-hospital .nav-link {
+      color: rgba(255, 255, 255, 0.9) !important;
+      font-weight: 500;
+      font-size: 0.95rem;
+      padding: 0.5rem 0.85rem !important;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .navbar-hospital .nav-link:hover,
+    .navbar-hospital .nav-link:focus {
+      background-color: rgba(255, 255, 255, 0.15);
+      color: #ffffff !important;
+    }
+
+    .navbar-hospital .nav-link.btn-login-nav {
+      background-color: #ffffff;
+      color: var(--hospital-navy) !important;
+      font-weight: 600;
+      padding: 0.5rem 1.1rem !important;
+      margin-left: 6px;
+    }
+
+    .navbar-hospital .nav-link.btn-login-nav:hover {
+      background-color: #e8f1fa;
+      color: var(--hospital-dark) !important;
+    }
+
+    /* Kartlar ve Görsel Alanlar */
+    .corporate-card {
+      background: #ffffff;
+      border: 1px solid #e5eaf2;
+      border-radius: 16px;
+      box-shadow: 0 6px 20px rgba(15, 76, 129, 0.05);
+      overflow: hidden;
+    }
+
+    .hero-image-wrapper {
+      position: relative;
+      height: 330px;
+      overflow: hidden;
+    }
+
+    .hero-image-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(9, 53, 92, 0.82) 10%, rgba(15, 76, 129, 0.15) 75%);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 1.75rem;
+      color: #ffffff;
+    }
+
+    .badge-corporate {
+      background-color: rgba(255, 255, 255, 0.2);
+      backdrop-filter: blur(4px);
+      color: #ffffff;
+      font-weight: 600;
+      padding: 0.4rem 0.85rem;
+      border-radius: 50px;
+      font-size: 0.8rem;
+      width: fit-content;
+      margin-bottom: 0.6rem;
+    }
+
+    .stat-box {
+      background-color: var(--hospital-light);
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 1rem;
+      height: 100%;
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .stat-box:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 76, 129, 0.08);
+    }
+
+    .stat-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background-color: var(--hospital-accent);
+      color: var(--hospital-navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .welcome-banner {
+      background: linear-gradient(135deg, #0f4c81 0%, #1967ab 100%);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 1.5rem;
+    }
+
+    .service-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 0.85rem;
+      border-radius: 12px;
+      background-color: #f8fafc;
+      border: 1px solid #edf2f7;
+    }
+
+    .service-item i {
+      font-size: 1.3rem;
+      color: var(--hospital-navy);
+      background: var(--hospital-accent);
+      padding: 8px 10px;
+      border-radius: 10px;
+    }
+
+    .satisfaction-box {
+      background-color: #eff6ff;
+      border-left: 4px solid var(--hospital-navy);
+      border-radius: 10px;
+      padding: 1rem 1.15rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1 & 2. KURUMSAL ÜST MENÜ VE MODÜL BAĞLANTILARI -->
+  <nav class="navbar navbar-expand-xl navbar-dark navbar-hospital sticky-top">
+    <div class="container">
+      <a class="navbar-brand" href="/SmartHospital/">
+        <i class="bi bi-hospital-fill"></i>
+        <span>Akıllı Hastane Otomasyonu</span>
+      </a>
+
+      <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#hospitalNavbar" aria-controls="hospitalNavbar" aria-expanded="false" aria-label="Menüyü Aç">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+
+      <div class="collapse navbar-collapse" id="hospitalNavbar">
+        <ul class="navbar-nav ms-auto align-items-xl-center gap-1 mt-3 mt-xl-0">
+          <li class="nav-item">
+            <a class="nav-link" href="/SmartHospital/views/yonetim.html">
+              <i class="bi bi-speedometer2"></i> Yönetim Paneli
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/SmartHospital/SmartHospital/SmartHospital/frontend/appointments/">
+              <i class="bi bi-calendar2-check"></i> Randevu Yönetimi
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/SmartHospital/views/randevular.html">
+              <i class="bi bi-calendar-plus"></i> Randevu Oluşturma
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/SmartHospital/views/doktor.php">
+              <i class="bi bi-heart-pulse"></i> Doktor Ekranı
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/SmartHospital/views/personel.php">
+              <i class="bi bi-person-badge"></i> Personel Ekranı
+            </a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link btn-login-nav" href="/SmartHospital/views/giris.html">
+              <i class="bi bi-box-arrow-in-right"></i> Giriş Ekranı
+            </a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ANA İÇERİK: İKİ SÜTUNLU KURUMSAL TASARIM -->
+  <main class="container my-4 my-lg-5">
+    <div class="row g-4 align-items-stretch">
+
+      <!-- 3. SOL TARAF: HASTANE TANITIM ALANI -->
+      <div class="col-lg-7">
+        <div class="corporate-card h-100 d-flex flex-column">
+          <!-- Büyük Hastane Görseli -->
+          <div class="hero-image-wrapper">
+            <img src="https://images.unsplash.com/photo-1519494026892-80bbd2d6fd0d?auto=format&fit=crop&w=1200&q=80" alt="Modern Akıllı Hastane Binası ve Sağlık Merkezi">
+            <div class="hero-overlay">
+              <span class="badge-corporate"><i class="bi bi-shield-check me-1"></i> Yeni Nesil Dijital Sağlık Altyapısı</span>
+              <h1 class="h3 fw-bold mb-1">SmartHospital Sağlık Kompleksi</h1>
+              <p class="mb-0 small text-white-50">Entegre Klinik, Poliklinik ve Hasta Takip Yönetim Platformu</p>
+            </div>
+          </div>
+
+          <!-- Kurumsal Tanıtım ve Hizmet İstatistikleri -->
+          <div class="p-4 flex-grow-1 d-flex flex-column justify-content-between">
+            <div>
+              <h2 class="h5 fw-bold text-primary-emphasis mb-2">Akıllı Hastane Otomasyonu Nedir?</h2>
+              <p class="text-secondary mb-4" style="line-height: 1.65;">
+                Akıllı Hastane Otomasyonu; hasta kabul süreçlerinden poliklinik randevu planlamasına, hekim muayene ekranlarından idari personel yönetimine kadar tüm hastane operasyonlarını tek merkezde birleştiren modern bir bilgi yönetim sistemidir.
+              </p>
+            </div>
+
+            <!-- Küçük Bilgi Kartları ve İstatistikler -->
+            <div class="row g-3">
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-icon"><i class="bi bi-person-hearts"></i></div>
+                  <div class="fw-bold fs-5 text-dark">45+ Uzman</div>
+                  <div class="small text-muted">Akademik ve Uzman Doktor Kadrosu</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-icon"><i class="bi bi-building-add"></i></div>
+                  <div class="fw-bold fs-5 text-dark">18 Birim</div>
+                  <div class="small text-muted">Tam Donanımlı Poliklinik ve Sağlık Birimi</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-icon"><i class="bi bi-clock-history"></i></div>
+                  <div class="fw-bold fs-5 text-dark">7/24 Erişim</div>
+                  <div class="small text-muted">Kesintisiz Online Randevu Hizmeti</div>
+                </div>
+              </div>
+              <div class="col-6 col-md-3">
+                <div class="stat-box">
+                  <div class="stat-icon"><i class="bi bi-clipboard2-pulse"></i></div>
+                  <div class="fw-bold fs-5 text-dark">%100 Dijital</div>
+                  <div class="small text-muted">Hızlı Hasta Kayıt ve Güvenli Arşiv</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. SAĞ TARAF: BİLGİ VE KARŞILAMA ALANI -->
+      <div class="col-lg-5">
+        <div class="corporate-card h-100 p-4 d-flex flex-column justify-content-between gap-4">
+          
+          <!-- Karşılama Mesajı -->
+          <div class="welcome-banner">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <i class="bi bi-stars fs-5"></i>
+              <span class="fw-semibold text-uppercase small" style="letter-spacing: 0.6px;">Hoş Geldiniz</span>
+            </div>
+            <h2 class="h5 fw-bold mb-2">Sağlığınız İçin Akıllı ve Hızlı Çözümler</h2>
+            <p class="small mb-0 opacity-90" style="line-height: 1.6;">
+              Üst menüdeki modülleri kullanarak sisteme giriş yapabilir, poliklinik randevusu oluşturabilir veya doktor ve personel panellerine doğrudan erişebilirsiniz.
+            </p>
+          </div>
+
+          <!-- Öne Çıkan Hastane Hizmetleri -->
+          <div>
+            <h3 class="h6 fw-bold text-uppercase text-secondary mb-3" style="letter-spacing: 0.5px;">
+              <i class="bi bi-grid-1x2-fill text-primary me-1"></i> Öne Çıkan Hastane Hizmetleri
+            </h3>
+            <div class="d-flex flex-column gap-2">
+              <div class="service-item">
+                <i class="bi bi-calendar2-week"></i>
+                <div>
+                  <div class="fw-semibold text-dark small">Merkezi Randevu Planlama</div>
+                  <div class="text-muted" style="font-size: 0.82rem;">Poliklinik ve doktor bazlı anlık uygunluk kontrolü ve randevu takibi.</div>
+                </div>
+              </div>
+              <div class="service-item">
+                <i class="bi bi-file-earmark-medical"></i>
+                <div>
+                  <div class="fw-semibold text-dark small">Entegre Hasta ve Poliklinik Takibi</div>
+                  <div class="text-muted" style="font-size: 0.82rem;">Muayene süreçleri, doktor değerlendirmeleri ve birim koordinasyonu.</div>
+                </div>
+              </div>
+              <div class="service-item">
+                <i class="bi bi-shield-lock"></i>
+                <div>
+                  <div class="fw-semibold text-dark small">Yetkilendirilmiş Yönetim ve Personel Ağı</div>
+                  <div class="text-muted" style="font-size: 0.82rem;">Doktor, idari personel ve yönetim birimleri için rol bazlı güvenli erişim.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Hasta Memnuniyeti ve Bilgilendirme -->
+          <div class="satisfaction-box">
+            <div class="d-flex align-items-center justify-content-between mb-1">
+              <span class="fw-bold text-primary-emphasis small"><i class="bi bi-award-fill me-1"></i> Hasta Memnuniyeti ve Kalite Standartları</span>
+              <span class="badge bg-primary">%98.4 Memnuniyet</span>
+            </div>
+            <p class="mb-0 text-secondary" style="font-size: 0.82rem; line-height: 1.5;">
+              Bekleme sürelerini en aza indiren dijital sıra ve randevu altyapımız ile hastalarımıza konforlu, şeffaf ve güvenli sağlık hizmeti sunuyoruz.
+            </p>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Bootstrap 5 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
