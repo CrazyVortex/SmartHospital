@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SmartHospital - Randevu Yönetimi</title>
+  <link rel="stylesheet" href="appointments.css" />
+</head>
+<body>
+  <div class="page-wrapper">
+    <header class="page-header">
+      <div>
+        <h1>Randevu Yönetimi</h1>
+        <p class="subtitle">SmartHospital ortak randevu oluşturma, listeleme, güncelleme ve iptal/silme modülü</p>
+      </div>
+      <nav class="top-nav">
+        <a href="../patients/index.html" class="nav-link">Hasta Yönetimi</a>
+      </nav>
+    </header>
+
+    <main class="content-grid">
+      <section class="card form-card">
+        <h2 id="formTitle">Yeni Randevu Oluştur</h2>
+        <form id="appointmentForm" novalidate>
+          <input type="hidden" id="appointmentId" name="id" />
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="patientId">Hasta ID *</label>
+              <input type="number" id="patientId" name="patient_id" min="1" required placeholder="Örn: 1" />
+            </div>
+
+            <div class="form-group">
+              <label for="clinicId">Poliklinik ID *</label>
+              <input type="number" id="clinicId" name="clinic_id" min="1" required placeholder="Örn: 1" />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="doctorId">Doktor ID *</label>
+            <input type="number" id="doctorId" name="doctor_id" min="1" required placeholder="Örn: 1" />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="appointmentDate">Randevu Tarihi *</label>
+              <input type="date" id="appointmentDate" name="appointment_date" required />
+            </div>
+
+            <div class="form-group">
+              <label for="appointmentTime">Randevu Saati *</label>
+              <input type="time" id="appointmentTime" name="appointment_time" required />
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="status">Durum</label>
+            <select id="status" name="status">
+              <option value="scheduled">Planlandı (scheduled)</option>
+              <option value="completed">Tamamlandı (completed)</option>
+              <option value="cancelled">İptal Edildi (cancelled)</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="notes">Notlar</label>
+            <textarea id="notes" name="notes" rows="3" placeholder="Randevu notu veya açıklama"></textarea>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="submitBtn" class="btn btn-primary">Kaydet</button>
+            <button type="button" id="cancelEditBtn" class="btn btn-secondary hidden">İptal</button>
+          </div>
+        </form>
+        <div id="formFeedback" class="feedback" role="status" aria-live="polite"></div>
+      </section>
+
+      <section class="card list-card">
+        <div class="list-header">
+          <h2>Kayıtlı Randevular</h2>
+          <div class="filter-bar">
+            <input type="search" id="searchInput" placeholder="Hasta, T.C., doktor veya poliklinik ara..." />
+            <input type="date" id="dateFilter" />
+            <select id="statusFilter">
+              <option value="">Tüm Durumlar</option>
+              <option value="scheduled">Planlandı</option>
+              <option value="completed">Tamamlandı</option>
+              <option value="cancelled">İptal Edildi</option>
+            </select>
+            <button type="button" id="refreshBtn" class="btn btn-secondary">Yenile</button>
+          </div>
+        </div>
+
+        <div class="table-container">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Hasta (T.C.)</th>
+                <th>Poliklinik</th>
+                <th>Doktor</th>
+                <th>Tarih</th>
+                <th>Saat</th>
+                <th>Durum</th>
+                <th>Notlar</th>
+                <th>İşlemler</th>
+              </tr>
+            </thead>
+            <tbody id="appointmentsTableBody">
+              <tr>
+                <td colspan="9" class="empty-row">Randevular yükleniyor...</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="appointments.js"></script>
+</body>
+</html>
