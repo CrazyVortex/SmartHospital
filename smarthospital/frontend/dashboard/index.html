@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>SmartHospital - Genel Panel</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../assets/style.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<div class="container-fluid p-4">
+  <h3 class="mb-4">Genel Panel</h3>
+
+  <div id="hata" class="alert alert-danger d-none"></div>
+
+  <!-- 4 özet kart -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3"><div class="card text-center"><div class="card-body">
+      <div class="text-muted">Bugünkü Toplam Randevu</div><h2 id="kartToplam">-</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center"><div class="card-body">
+      <div class="text-muted">Kayıtlı Hasta Sayısı</div><h2 id="kartHasta">-</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center"><div class="card-body">
+      <div class="text-muted">Bekleyen Hasta / Sıra</div><h2 id="kartBekleyen">-</h2></div></div></div>
+    <div class="col-md-3"><div class="card text-center"><div class="card-body">
+      <div class="text-muted">Tamamlanan Muayene</div><h2 id="kartTamam">-</h2></div></div></div>
+  </div>
+
+  <!-- Hızlı butonlar -->
+  <div class="mb-4">
+    <a href="../patients/index.html" class="btn btn-primary">Yeni Hasta Kaydı</a>
+    <a href="../appointments/index.html" class="btn btn-outline-primary">Randevu Ekranı</a>
+    <a href="../examinations/index.html" class="btn btn-outline-success">Muayene Ekranı</a>
+  </div>
+
+  <!-- Yoğunluk kartları: 3. Günde doldurulacak -->
+  <div id="yogunlukAlani" class="mb-4"></div>
+
+  <!-- Bugünün randevuları -->
+  <div class="card">
+    <div class="card-header">Bugünün Randevuları</div>
+    <div class="table-responsive">
+      <table class="table table-hover mb-0">
+        <thead><tr>
+          <th>Saat</th><th>Hasta Adı</th><th>T.C. No</th><th>Poliklinik</th><th>Doktor</th><th>Durum</th>
+        </tr></thead>
+        <tbody id="randevuTablosu"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function temiz(metin) {            // XSS koruması: HTML özel karakterlerini etkisiz yapar
+  const d = document.createElement('div');
+  d.textContent = metin ?? '';
+  return d.innerHTML;
+}
+async function yogunlukYukle() {
+  const alan = document.getElementById('yogunlukAlani');
+  try {
+    const sonuc = await (await fetch('../../backend/php/api/dashboard/density_analysis.php')).json();
+    if (!sonuc.ok) throw new Error(sonuc.message);
+
+    const renk = { normal: 'success', yogun: 'warning', kritik: 'danger' };
+    let html = '';
+    let kritikler = [];
+
+    for (const p of sonuc.data) {
+      if (p.seviye === 'kritik') kritikler.push(p.poliklinik);
+      html += '<div class="col-md-4"><div class="card yogunluk-' + temiz(p.seviye) + '">' +
+        '<div class="card-body">' +
+        '<h6>' + temiz(p.poliklinik) + '</h6>' +
+        '<span class="badge bg-' + renk[p.seviye] + '">' + temiz(p.seviye.toUpperCase()) + '</span>' +
+        '<div class="progress my-2"><div class="progress-bar bg-' + renk[p.seviye] + '" style="width:' +
+        Math.min(p.oran, 100) + '%">%' + temiz(p.oran) + '</div></div>' +
+        '<small>Bekleyen: ' + temiz(p.bekleyen) + ' / ' + temiz(p.kapasite) +
+        '<br>Tahmini bekleme: <b>' + temiz(p.tahmini_bekleme_dk) + ' dk</b></small>' +
+        '</div></div></div>';
+    }
+
+    let banner = '';
+    if (kritikler.length > 0) {
+      banner = '<div class="alert alert-danger"><b>KRİTİK YOĞUNLUK:</b> ' +
+               temiz(kritikler.join(', ')) + '</div>';
+    }
+    alan.innerHTML = banner + '<div class="row g-3">' + html + '</div>';
+  } catch (e) {
+    alan.innerHTML = '<div class="alert alert-danger">Yoğunluk verisi alınamadı: ' + temiz(e.message) + '</div>';
+  }
+}
+yogunlukYukle();
+async function panelYukle() {
+  const hata = document.getElementById('hata');
+  const tablo = document.getElementById('randevuTablosu');
+  tablo.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Yükleniyor...</td></tr>';
+  try {
+    const cevap = await fetch('../../backend/php/api/dashboard/dashboard_summary.php');
+    const sonuc = await cevap.json();
+    if (!sonuc.ok) throw new Error(sonuc.message);
+
+    const v = sonuc.data;
+    document.getElementById('kartToplam').textContent = v.bugun_toplam_randevu;
+    document.getElementById('kartHasta').textContent = v.kayitli_hasta;
+    document.getElementById('kartBekleyen').textContent = v.bekleyen_hasta;
+    document.getElementById('kartTamam').textContent = v.tamamlanan_muayene;
+
+    if (v.bugunun_randevulari.length === 0) {
+      tablo.innerHTML = '<tr><td colspan="6" class="text-center text-muted">Bugün için randevu yok.</td></tr>';
+      return;
+    }
+    tablo.innerHTML = v.bugunun_randevulari.map(r =>
+      '<tr><td>' + temiz(r.randevu_saati.substring(0, 5)) + '</td>' +
+      '<td>' + temiz(r.hasta_adi) + '</td>' +
+      '<td>' + temiz(r.tc_no) + '</td>' +
+      '<td>' + temiz(r.poliklinik) + '</td>' +
+      '<td>' + temiz(r.doktor) + '</td>' +
+      '<td><span class="badge badge-' + temiz(r.durum) + '">' + temiz(r.durum) + '</span></td></tr>'
+    ).join('');
+  } catch (e) {
+    hata.textContent = 'Veriler alınamadı: ' + e.message;
+    hata.classList.remove('d-none');
+    tablo.innerHTML = '';
+  }
+}
+panelYukle();
+</script>
+</body>
+</html>

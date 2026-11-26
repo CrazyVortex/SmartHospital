@@ -1,0 +1,8 @@
+/* ÜYE 3 - 2. GÜN: ortak assets/style.css dosyasının SONUNA eklenecek (zaten varsa tekrar ekleme) */
+.badge-bekliyor   { background-color: #ffc107; color: #000; }
+.badge-muayenede  { background-color: #0d6efd; color: #fff; }
+.badge-tamamlandi { background-color: #198754; color: #fff; }
+.badge-iptal      { background-color: #dc3545; color: #fff; }
+.yogunluk-normal  { border-left: 6px solid #198754; }
+.yogunluk-yogun   { border-left: 6px solid #fd7e14; }
+.yogunluk-kritik  { border-left: 6px solid #dc3545; }
